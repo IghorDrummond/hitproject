@@ -167,6 +167,19 @@ Agora que o projeto está configurado, você pode começar a consumir as rotas d
     "message": "Tarefa Atualizada com sucesso!"
 }
 
+### Metricas
+**Método**: TODOS
+
+**URL**: https://localhost:porta-definida/api/v1/metrica
+
+**Retorno**:
+{
+    "total_requests": 1,
+    "requests_by_method": {
+        "POST": 1
+    },
+    "average_response_time": 0
+}
 ---
 
 ## Conclusão
