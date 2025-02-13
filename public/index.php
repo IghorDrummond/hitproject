@@ -8,6 +8,13 @@ if (PHP_SAPI == 'cli-server') {
     }
 }
 
+// Variáveis globais para armazenar métricas
+$metrics = [
+    'total_requests' => 0,
+    'requests_by_method' => [], // Inicializa vazio para aceitar qualquer método
+    'response_times' => [],
+];
+
 require __DIR__ . '/../vendor/autoload.php';
 
 session_start();

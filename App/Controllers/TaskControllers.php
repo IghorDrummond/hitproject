@@ -36,6 +36,7 @@ namespace App\Controllers{
     ==================================================
     Modificações:
     @ Data - Descrição - Programador(a)
+    @ 13/02/2025 - Conjunto de requisições da API - Ighor Drummond
     */
     class TaskController extends Connection{
         //Constantes
@@ -73,7 +74,7 @@ namespace App\Controllers{
             $this->Log("INFO", "Retornado dados!");
 
             //Retorna dados pesquisado no banco de dados
-            return $this->withApiHeaders($response)->withJson(["error" => false, "message" => "Dados recuperados com sucesso!", "data" => $ListTask]);
+            return $response->withStatus(200)->withJson(["error" => false, "message" => "Dados recuperados com sucesso!", "data" => $ListTask]);
         }
 
         /*
@@ -97,7 +98,7 @@ namespace App\Controllers{
             forEach(self::KEYS as $k){
 
                 //Valida se tem os campos obrigatórios
-                if(!isset($dados[$k]) || empty($dados[$k])) return $this->withApiHeaders($response, 403)->withJson(['error' => true, "message" => "Falta Campo $k Obrigatório!"]);
+                if(!isset($dados[$k]) || empty($dados[$k])) return $response->withStatus(403)->withJson(['error' => true, "message" => "Falta Campo $k Obrigatório!"]);
 
                 //Sanatiza dados
                 $dados[$k] = $this->SanatizaDados($dados[$k]);
@@ -115,11 +116,11 @@ namespace App\Controllers{
                 //Registra Log de Erro
                 $this->Log("ERROR", "NÃO FOI POSSÍVEL SALVAR NOVA TAREFA NO BANCO DE DADOS.");
                 //Retorna erro ao client
-                return $this->withApiHeaders($response, 501)->withJson(['error'=> true,'message'=> 'Não foi possível criar uma nova tarefa devido a uma inconsistência interna. Tente novamente ou mais tarde.']);
+                return $response->withStatus(501)->withJson(['error'=> true,'message'=> 'Não foi possível criar uma nova tarefa devido a uma inconsistência interna. Tente novamente ou mais tarde.']);
             }   
                 
             //Retorna Json de sucesso
-            return $this->withApiHeaders($response)->withJson(['error'=> false,'message'=> 'Tarefa Adicionada com sucesso!', 'data'=> ['id' => $task->id]]);
+            return $response->withStatus(200)->withJson(['error'=> false,'message'=> 'Tarefa Adicionada com sucesso!', 'data'=> ['id' => $task->id]]);
         }
 
         /*
@@ -143,7 +144,7 @@ namespace App\Controllers{
             $data = $request->getParsedBody();
 
             //Valida se o campo ID está vázio
-            if(empty($id)) return $this->withApiHeaders($response, 403)->withJson(['error' => true, "message" => "ID da tarefa não foi passado."]);
+            if(empty($id)) return $response->withStatus(403)->withJson(['error' => true, "message" => "ID da tarefa não foi passado."]);
 
             //Sanatiza dados
             $id = $this->SanatizaDados($id);  
@@ -158,7 +159,7 @@ namespace App\Controllers{
             $task = Task::find($id);
 
             //Valida se teve retorno
-            if(!$task) return $this->withApiHeaders($response, 403)->withJson(["error"=> true, "message"=> "Tarefa não existe."]);
+            if(!$task) return $response->withStatus(403)->withJson(["error"=> true, "message"=> "Tarefa não existe."]);
 
             //Prepara dados para atualização
             $dados = [
@@ -168,10 +169,10 @@ namespace App\Controllers{
             ];
 
             //Valida se teve sucesso ao atualizar
-            if(!$task->update($dados)) return $this->withApiHeaders($response, 403)->withJson(["error"=> true, "message"=> "Não foi possível atualizar tarefa devido a uma inconsistência interna. Tente novamente ou mais tarde."]);
+            if(!$task->update($dados)) return $response->withStatus(501)->withJson(["error"=> true, "message"=> "Não foi possível atualizar tarefa devido a uma inconsistência interna. Tente novamente ou mais tarde."]);
 
             //Retorna Json de sucesso
-            return $this->withApiHeaders($response)->withJson(['error'=> false,'message'=> 'Tarefa Atualizada com sucesso!']);
+            return $response->withStatus(200)->withJson(['error'=> false,'message'=> 'Tarefa Atualizada com sucesso!']);
         }
 
 
@@ -193,7 +194,7 @@ namespace App\Controllers{
             $id = isset($args['id']) ? $args['id'] : "";
 
             //Valida se o campo ID está vázio
-            if(empty($id)) return $this->withApiHeaders($response, 403)->withJson(['error' => true, "message" => "ID da tarefa não foi passado."]);
+            if(empty($id)) return $response->withStatus(403)->withJson(['error' => true, "message" => "ID da tarefa não foi passado."]);
 
             //Sanatiza dados
             $id = $this->SanatizaDados($id);  
@@ -202,13 +203,13 @@ namespace App\Controllers{
             $task = Task::where('id', $id)->first();
 
             //Valida se teve retorno
-            if(!$task) return $this->withApiHeaders($response, 403)->withJson(["error"=> true, "message"=> "Tarefa não existe."]);
+            if(!$task) return $response->withStatus(403)->withJson(["error"=> true, "message"=> "Tarefa não existe."]);
 
             //Valida se teve sucesso ao atualizar
-            if(!$task->update(['actived' => false])) return $this->withApiHeaders($response, 403)->withJson(["error"=> true, "message"=> "Não foi possível deletar tarefa $id devido a uma inconsistência interna. Tente novamente ou mais tarde."]);
+            if(!$task->update(['actived' => false])) return $response->withStatus(403)->withJson(["error"=> true, "message"=> "Não foi possível deletar tarefa $id devido a uma inconsistência interna. Tente novamente ou mais tarde."]);
 
             //Retorna Json de sucesso
-            return $this->withApiHeaders($response)->withJson(['error'=> false,'message'=> 'Tarefa Deletada com sucesso!', 'data' => ['id'=> $task->id]]);  
+            return $response->withStatus(200)->withJson(['error'=> false,'message'=> 'Tarefa Deletada com sucesso!', 'data' => ['id'=> $task->id]]);  
         }
 
         /*
@@ -229,7 +230,7 @@ namespace App\Controllers{
             $id = isset($args['id']) ? $args['id'] : "";
 
             //Valida se o campo ID está vázio
-            if(empty($id)) return $this->withApiHeaders($response, 403)->withJson(['error' => true, "message" => "ID da tarefa não foi passado."]);
+            if(empty($id)) return $response->withStatus(403)->withJson(['error' => true, "message" => "ID da tarefa não foi passado."]);
 
             //Sanatiza dados
             $id = $this->SanatizaDados($id);  
@@ -238,13 +239,41 @@ namespace App\Controllers{
             $task = Task::find($id);
 
             //Valida se teve retorno
-            if(!$task) return $this->withApiHeaders($response, 403)->withJson(["error"=> true, "message"=> "Tarefa não existe."]);
+            if(!$task) return $response->withStatus(403)->withJson(["error"=> true, "message"=> "Tarefa não existe."]);
 
             //Valida se teve sucesso ao atualizar
-            if(!$task->update(['complete' => true])) return $this->withApiHeaders($response, 403)->withJson(["error"=> true, "message"=> "Não foi possível atualizar tarefa devido a uma inconsistência interna. Tente novamente ou mais tarde."]);
+            if(!$task->update(['complete' => true])) return $$response->withStatus(403)->withJson(["error"=> true, "message"=> "Não foi possível atualizar tarefa devido a uma inconsistência interna. Tente novamente ou mais tarde."]);
 
             //Retorna Json de sucesso
-            return $this->withApiHeaders($response)->withJson(['error'=> false,'message'=> 'Tarefa Atualizada com sucesso!']);
+            return $response->withStatus(200)->withJson(['error'=> false,'message'=> 'Tarefa Atualizada com sucesso!']);
+        }
+
+        /*
+        ==========================================
+        MÉTODO: getMetrics()
+        PARÂMETROS: $request (Request) Responsável por requisições da API / $response (Response) - Responsável por montar o cabeçalho da resposta / $metrics (array) dados da metricas
+        DESCRIÇÃO: Retorna métrica da API
+        RETORNO: Response
+        PRIVADO: Não
+        DATA: 13/02/2025 
+        PROGRAMADOR(A): Ighor Drummond
+        ==========================================~
+        Modificações:
+        @ Data - Descrição - Programador(a)
+        */
+        public function getMetrics($request, $response, $metrics){
+            // Calcula o tempo médio de resposta01
+            $averageResponseTime = count($metrics['response_times']) > 0 ? array_sum($metrics['response_times']) / count($metrics['response_times']) : 0;
+
+            // Prepara os dados das métricas
+            $data = [
+                'total_requests' => $metrics['total_requests'],
+                'requests_by_method' => $metrics['requests_by_method'],
+                'average_response_time' => $averageResponseTime,
+            ];
+
+            // Retorna as métricas em formato JSON
+            return $response->withStatus(200)->withJson($data);
         }
 
         /*

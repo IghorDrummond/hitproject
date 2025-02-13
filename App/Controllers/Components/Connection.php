@@ -31,6 +31,7 @@ namespace Connection{
     Data: 12/02/2025
     ==================================================
     Modificações:
+    @ 13/02/2025 - Removido método que setava cabeçalhos pois foi transferido para Middleware - Ighor Drummond
     @ Data - Descrição - Programador(a)
     */
     class Connection{
@@ -79,47 +80,6 @@ namespace Connection{
 
             //Fecha arquivo
             fclose($nHandle);
-        }
-
-        /*
-        ==========================================
-        MÉTODO: withApiHeaders()
-        PARÂMETROS: $response (Response) - Responsável por montar o cabeçalho da resposta / $statusCode (int) - Código de retorno HTTP
-        DESCRIÇÃO: Monta o cabeçalho da resposta com os headers necessários para a API
-        RETORNO: Response
-        PRIVADO: Não
-        DATA: 12/02/2025 
-        PROGRAMADOR(A): Ighor Drummond
-        ==========================================~
-        Modificações:
-        @ Data - Descrição - Programador(a)
-        */
-        public function withApiHeaders($response, $statusCode = 200)
-        {
-            //Evita ataques XSS
-            return $response
-                ->withStatus($statusCode)
-                ->withHeader('Content-Type', 'application/json')
-                ->withHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'")
-                ->withHeader('X-Content-Type-Options', 'nosniff')
-                ->withHeader('X-Frame-Options', 'DENY')
-                ->withHeader('X-XSS-Protection', '1; mode=block')
-                ->withHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
-                ->withHeader('Referrer-Policy', 'no-referrer')
-                ->withHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()')
-                ->withHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
-                ->withHeader('Pragma', 'no-cache')
-                ->withHeader('Expires', '0')
-                ->withHeader('Access-Control-Allow-Origin', 'https://seusite.com')
-                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
-                ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-                ->withHeader('Access-Control-Expose-Headers', 'X-Custom-Header')
-                ->withHeader('Access-Control-Allow-Credentials', 'true')
-                ->withHeader('Set-Cookie', 'sessionid=12345; Secure; HttpOnly; SameSite=Strict')
-                ->withHeader('Expect-CT', 'enforce, max-age=86400')
-                ->withHeader('X-Permitted-Cross-Domain-Policies', 'none')
-                ->withHeader('X-Download-Options', 'noopen')
-                ->withHeader('X-Powered-By', 'PHP/8.1');
         }
     }
 }

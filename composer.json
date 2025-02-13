@@ -16,7 +16,8 @@
         "slim/slim": "~3.0",
         "slim/php-view": "^2.0",
         "monolog/monolog": "^1.17",
-        "illuminate/database": "^11.42"
+        "illuminate/database": "^11.42",
+        "endclothing/prometheus_client_php": "^0.9.1"
     },
     "autoload": {
         "psr-4": {
